@@ -38,6 +38,8 @@ class Player(Object):
         self.speed_end: None = None
         self.jump_size = 600 # default values
 
+        self.jump_limit = 2
+
         self.direction: Direction = Direction.LEFT
         self.animation_count = 0
         self.fall_start = time()
@@ -69,7 +71,7 @@ class Player(Object):
         self.jump_key = pygame.K_SPACE
 
     def jump(self):
-        if self.jump_count >= 2:
+        if self.jump_count >= self.jump_limit:
             return
         self.velocity.y = -1 * self.jump_size
         self.animation_count = 0
@@ -142,7 +144,7 @@ class Player(Object):
             if self.velocity.y < 0:
                 if self.jump_count == 1:
                     variant = asset.CharacterVariant.JUMP
-                elif self.jump_count == 2:
+                elif self.jump_count >= 2:
                     variant = asset.CharacterVariant.DOUBLE_JUMP
             # elif self.velocity.y > GRAVITY * 2:
             #     name = "fall"

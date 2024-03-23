@@ -19,7 +19,9 @@ from object.endpoint import Endpoint
 from const import DISPLAY_SIZE
 from player import Player
 from vector import Vector
+
 from endscreen import endscreen
+from player_selector import player_selector
 
 class PixelRun(LevelManager):
     def __init__(self, surface: Surface) -> None:
@@ -47,12 +49,34 @@ class PixelRun(LevelManager):
             obj.adopt(self)
 
     def start(self):
+        player_type = player_selector(self.surface)
+
+        character_type: asset.CharacterType = [
+            asset.CharacterType.MASK_DUDE,
+            asset.CharacterType.NINJA_FROG,
+            asset.CharacterType.PINK_MAN,
+            asset.CharacterType.VIRTUAL_GUY
+        ][player_type]
+
         self.prev_pixel = time()
 
         self.add(TileSheet((0,0), DISPLAY_SIZE, asset.get_asset_path(asset.AssetType.BACKGROUND, asset.BackgroundType.PURPLE)))
-        self.player = Player(self.player_start_point, (48, 48), self.key_listener, asset.CharacterType.PINK_MAN)
+        self.player = Player(self.player_start_point, (48, 48), self.key_listener, character_type)
         self.player.top_down = False
         self.add(self.player)
+
+        if player_type == 0:
+            self.player.jump_limit = 1
+            self.player.jump_size = 800
+            self.player.speed = 400
+        elif player_type == 1:
+            self.player.jump_size = 800
+        elif player_type == 2:
+            pass
+        elif player_type == 3:
+            self.player.jump_size = 400
+            self.player.jump_limit = 4
+            self.player.speed = 450
 
         self.time_start = time()
 
